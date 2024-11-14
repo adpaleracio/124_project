@@ -42,6 +42,7 @@ lexemes_dict = {
     '^DIFFRINT$': 'Comparison Operator',
 
     '^SMOOSH$': 'Concatenation Operator',
+    '^\\+$': 'Concatenation Operator',
     
     '^MAEK$': 'Typecast Operator',
     '^A$': 'Typecast Keyword',
