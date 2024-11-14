@@ -15,6 +15,7 @@ lexemes_dict = {
 
     '^I HAS A$': 'Variable Declaration',
     '^ITZ$': 'Variable Assignment',
+    '^IT$': 'Implicit Variable',
 
     '^R$': 'Assignment Operator',
 
