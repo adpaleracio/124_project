@@ -1,18 +1,6 @@
 import os, re
 from tkinter.filedialog import askopenfile
-
-
-lexemes_dict = {'^HAI$': 'Code Delimiter',
-            '^KTHXBYE$': 'Code Delimiter',
-            '^I HAS A$': 'Variable Declaration',
-            '^HOW IZ I$': 'Function Declaration',
-            '^ITZ$': 'Variable Assignment',
-            '^VISIBLE$': 'Output Keyword',
-            '^0$|^\\-?[1-9][0-9]*$' : 'Literal',
-            '^".*"$' : 'Literal'
-            }
-
-identifier = '^[a-zA-Z][a-zA-Z0-9\\_]*$'
+from lexemes import lexemes_dict, identifier
 
 lexemes_result = {}
 
