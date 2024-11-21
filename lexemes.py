@@ -19,10 +19,11 @@ lexemes_dict = {
 
     '^R$': 'Assignment Operator',
 
-    '^0$|^\\-?[1-9][0-9]*$': 'Literal',
-    '^".*"$': 'Literal',
-    '^(WIN|FAIL)$': 'Literal',
-    '^(NOOB|NUMBR|NUMBAR|YARN|TROOF)$': 'Literal',
+    '^0$|^\\-?[1-9][0-9]*$': 'NUMBR Literal',
+    '^\\-?[0-9]+\\.[0-9]+$': 'NUMBAR Literal',
+    '^".*"$': 'YARN Literal',
+    '^(WIN|FAIL)$': 'TROOF Literal',
+    '^(NOOB|NUMBR|NUMBAR|YARN|TROOF)$': 'TYPE Literal',
 
     '^SUM OF$': 'Arithmetic Operator',
     '^DIFF OF$': 'Arithmetic Operator',
@@ -65,7 +66,7 @@ lexemes_dict = {
     '^IM IN YR$': 'Loop Start',
     '^UPPIN$': 'Loop Increment',
     '^NERFIN$': 'Loop Decrement',
-    '^YR$': 'Loop Variable',
+    '^YR$': 'IDK',
     '^TIL$': 'Loop Until',
     '^WILE$': 'Loop While',
     '^IM OUTTA YR$': 'Loop End',
