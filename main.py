@@ -137,7 +137,146 @@ class LOLCodeInterpreter:
                             self.lexemes_result.append([curr_string, "Identifier"])
                         terms = other_terms
                         break
-            
+
+    def syntax_analyzer(self, lexemes):
+        def expect(actual, expected_label):
+            if actual != expected_label:
+                raise SyntaxError(f"Syntax Error: Expected {expected_label}, but got {actual}.")
+
+        def parse_program(lexemes):
+            # Grammar: <program> ::= HAI <linebreak> <statement_list> KTHXBYE
+            index = 0
+            token, token_type = lexemes[index]
+            expect(token_type, "Code Delimiter")  # Expect "HAI"
+            if token != "HAI":
+                raise SyntaxError("Program must start with 'HAI'.")
+
+            index += 1
+            token, token_type = lexemes[index]
+            expect(token_type, "Linebreak")  # Expect linebreak
+            index += 1
+
+            index = parse_statement_list(lexemes, index)  # Parse statement list
+
+            token, token_type = lexemes[index]
+            expect(token_type, "Code Delimiter")  # Expect "KTHXBYE"
+            if token != "KTHXBYE":
+                raise SyntaxError("Program must end with 'KTHXBYE'.")
+
+            index += 1
+            return index
+
+        def parse_statement_list(lexemes, index):
+            # Grammar: <statement_list> ::= <statement> <linebreak> |
+            #                                <statement> <linebreak> <statement_list>
+            while index < len(lexemes):
+                index = parse_statement(lexemes, index)
+
+                token, token_type = lexemes[index]
+                if token_type != "Linebreak":
+                    break  # End of statements
+                index += 1
+
+            return index
+
+        def parse_statement(lexemes, index):
+            # Grammar: <statement> ::= <variable_declaration> | <print> | ... other statements
+            token, token_type = lexemes[index]
+            if token_type == "Variable Declaration":
+                index = parse_variable_declaration(lexemes, index)
+            elif token_type == "Output Keyword":
+                index = parse_output(lexemes, index)
+            elif token_type == "Input Keyword":
+                index = parse_input(lexemes, index)
+            else:
+                raise SyntaxError(f"Unknown statement starting with {token} ({token_type}).")
+            return index
+
+        def parse_variable_declaration(lexemes, index):
+            # Grammar: <variable_declaration> ::= I HAS A varident | I HAS A varident ITZ <expr>
+            token, token_type = lexemes[index]
+            expect(token_type, "Variable Declaration")  # Expect "I HAS A"
+            index += 1
+
+            token, token_type = lexemes[index]
+            expect(token_type, "Identifier")  # Expect variable identifier
+            index += 1
+
+            if index < len(lexemes):
+                token, token_type = lexemes[index]
+                if token == "ITZ":
+                    index += 1  # Move past "ITZ"
+                    index = parse_expr(lexemes, index)
+
+            return index
+
+        def parse_output(lexemes, index):
+            # Grammar: <print> ::= VISIBLE varident | VISIBLE <expr_list> | VISIBLE IT
+            token, token_type = lexemes[index]
+            expect(token_type, "Output Keyword")  # Expect "VISIBLE"
+            index += 1
+
+            token, token_type = lexemes[index]
+            if token_type in {"Identifier", "Implicit Variable", "NUMBR Literal", "NUMBAR Literal", "YARN Literal", "TROOF Literal"}:
+                index += 1  # Valid output
+            elif token == "IT":
+                index += 1
+            else:
+                index = parse_expr_list(lexemes, index)
+
+            return index
+
+        def parse_input(lexemes, index):
+            # Grammar: <input> ::= GIMMEH varident
+            token, token_type = lexemes[index]
+            expect(token_type, "Input Keyword")  # Expect "GIMMEH"
+            index += 1
+
+            token, token_type = lexemes[index]
+            expect(token_type, "Identifier")  # Expect variable identifier
+            index += 1
+
+            return index
+
+        def parse_expr(lexemes, index):
+            # Grammar: <expr> ::= <literal> | <operation>
+            token, token_type = lexemes[index]
+            if token_type in {"NUMBR Literal", "NUMBAR Literal", "YARN Literal", "TROOF Literal"}:
+                index += 1  # Literal
+            elif token_type in {"Arithmetic Operator", "Boolean Operator", "Comparison Operator", "Concatenation Operator"}:
+                index = parse_operation(lexemes, index)
+            else:
+                raise SyntaxError(f"Expected expression, found {token} ({token_type}).")
+            return index
+
+        def parse_operation(lexemes, index):
+            # Grammar: <operation> ::= <addition> | <subtraction> | ...
+            token, token_type = lexemes[index]
+            expect(token_type, "Arithmetic Operator")  # Example for arithmetic operations
+            index += 1
+            index = parse_expr_list(lexemes, index)
+            return index
+
+        def parse_expr_list(lexemes, index):
+            # Grammar: <expr_list> ::= <expr> | <expr> AN <expr_list>
+            index = parse_expr(lexemes, index)
+            while index < len(lexemes):
+                token, token_type = lexemes[index]
+                if token != "AN":
+                    break
+                index += 1  # Skip "AN"
+                index = parse_expr(lexemes, index)
+
+            return index
+
+        try:
+            parse_program(lexemes)
+            messagebox.showinfo("Syntax Analysis", "Syntax is valid!")
+        except SyntaxError as e:
+            messagebox.showerror("Syntax Error", str(e))
+
+
+
 
     def main_interpreter(self):
         self.lexemes_result.clear()
@@ -152,6 +291,8 @@ class LOLCodeInterpreter:
             self.output_box1.insert(tk.END, f"{lexeme:<15} {lexeme_type}\n")
 
         self.output_box1.config(state="disabled")
+
+        self.syntax_analyzer(self.lexemes_result)
 
 
 if __name__ == "__main__":

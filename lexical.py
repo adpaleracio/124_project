@@ -71,9 +71,10 @@ def lexicalAnalyzer(line):
                 
                 if not okay:
                     if re.match(identifier, terms[i]):
-                        lexemes_result.append([terms[i], "Identifier"])
+                        lexemes_result.append([terms[i], "Variable Identifier"])
 
         i += 1
+
 
 
 
